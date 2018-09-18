@@ -27,6 +27,52 @@ pups_data = read_csv(file = "./data/FAS_pups.csv")
 pups_data = janitor::clean_names(pups_data)
 ```
 
+## Look at data
+
+Look at litters data. 
+
+```{r}
+head(litters_data)
+tail(litters_data)
+skimr::skim(litters_data)
+```
+
+Skip some rows...
+
+```{r}
+litters_data = read_csv(file = "./data/FAS_litters.csv",
+  skip = 10, col_names = FALSE)
+```
+
+## Redo `FAS_pups.csv` import
+
+```{r}
+pups_data = read_csv("./data/FAS_pups.csv")
+pups_data = read_csv("./data/FAS_pups.csv", col_types = "ciiiii")
+skimr::skim(pups_data)
+```
 
 
+## Other formats
 
+Read in mlb data
+
+```{r}
+mlb_data = readxl::read_excel(path = "./data/mlb11.xlsx")
+
+mlb_subset = readxl::read_excel(path = "./data/mlb11.xlsx", 
+                                range = "A1:E17")
+```
+
+Read in pulse data: 
+
+```{r}
+pulse_data = haven::read_sas("./data/public_pulse_data.sas7bdat")
+```
+
+## Compare with base R
+
+```{r}
+pups_readr = read_csv("./data/FAS_pups.csv")
+pups_baser = read.csv("./data/FAS_pups.csv")
+```
