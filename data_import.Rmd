@@ -1,0 +1,32 @@
+---
+title: "Data Import"
+author: "Marisa Sobel"
+date: "9/18/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+## Import FAS csv files 
+
+Import first csv. (`FAS_litters.csv`). 
+
+```{r}
+litters_data = read_csv(file = "./data/FAS_litters.csv")
+litters_data = janitor::clean_names(litters_data)
+```
+
+Import second csv. (`FAS_pups.csv`). 
+
+```{r}
+pups_data = read_csv(file = "./data/FAS_pups.csv")
+pups_data = janitor::clean_names(pups_data)
+```
+
+
+
+
