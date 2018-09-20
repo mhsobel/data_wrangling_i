@@ -1,0 +1,150 @@
+---
+title: "Data Manipulation"
+author: "Marisa Sobel"
+date: "9/20/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+## Import FAS csv files 
+
+Import first csv. (`FAS_litters.csv`). 
+
+```{r}
+
+litters_data = read_csv("./data/FAS_litters.csv",
+  col_types = "ccddiiii")
+litters_data = janitor::clean_names(litters_data)
+
+pups_data = read_csv("./data/FAS_pups.csv",
+  col_types = "ciiiii")
+pups_data = janitor::clean_names(pups_data)
+
+```
+
+## Select variables 
+Selecting columns 
+
+name by name
+
+```{r}
+select(litters_data, group, litter_number, gd0_weight)
+select(litters_data, litter_number, gd0_weight, pups_survive)
+```
+
+specific range:
+
+```{r}
+select(litters_data, gd_of_birth:pups_survive)
+```
+
+what you DON'T want to keep
+
+```{r}
+select(litters_data, -litter_number)
+```
+
+renaming while selecting 
+just renaming if only changing 1 or 2 var, not have to type in all variables 
+
+```{r}
+select(litters_data, group, litter_number, gest_day_0_weight = gd0_weight)
+rename(litters_data, gest_day_0_weight = gd0_weight)
+```
+
+use select helpers
+
+```{r}
+select(litters_data, starts_with("gd"))
+select(litters_data, litter_number, starts_with("pup"))
+
+# puts litters_number first
+select(litters_data, litter_number, everything())  
+```
+
+### Practice
+In the pups data, select the columns containing litter number, sex, and PD ears.
+
+```{r}
+select(pups_data, litter_number, sex, pd_ears)
+```
+
+## Filter obs
+
+Eliminate some rows from dataset. 
+Which are the rows you want to take out? 
+_Identify a feature of some variable, TRUE=keep, FALSE=discard_
+
+Do some filtering 
+
+```{r}
+filter(litters_data, gd0_weight < 25)
+filter(litters_data, gd0_weight >= 25)
+
+filter(litters_data, pups_born_alive == 8)
+filter(litters_data, !is.na(gd0_weight))
+
+filter(litters_data, group == "Low7" | group == "Low8")
+filter(litters_data, group %in% c("Low7", "Low8"))
+
+filter(litters_data, pups_born_alive %in% 4:6)
+
+filter(litters_data, pups_born_alive %in% 4:7 & !is.na(gd0_weight))
+```
+
+### Practice
+_**In the pups data:**_
+Filter to include only pups with sex 1
+Filter to include only pups with PD walk less than 11 and sex 2
+
+```{r}
+filter(pups_data, sex == 1)
+filter(pups_data, sex == 2, pd_walk < 11)
+```
+
+## Mutate
+
+Add new variable, change group names to lower-case
+
+```{r}
+mutate(litters_data,
+       wt_gain = gd18_weight - gd0_weight, 
+       group = tolower(group)
+)
+
+# new variable, and alter it immediatly
+
+mutate(litters_data, 
+       wt_gain = gd18_weight - gd0_weight,
+       wt_gain_squared = wt_gain^2)
+```
+
+### Practice
+_**In the pups data:**_
+Create a variable that subtracts 7 from PD pivot
+Create a variable that is the sum of all the PD variables
+
+```{r}
+mutate(pups_data, 
+       new_var = pd_pivot - 7)
+```
+
+## Arrange 
+
+Arrange the data
+
+```{r}
+arrange(litters_data, gd0_weight)
+arrange(litters_data, pups_born_alive, gd0_weight)
+arrange(litters_data, desc(pups_born_alive), gd0_weight)
+```
+
+## Pipeline for `litters_data`
+
+
+
