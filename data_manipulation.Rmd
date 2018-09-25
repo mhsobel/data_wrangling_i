@@ -146,5 +146,62 @@ arrange(litters_data, desc(pups_born_alive), gd0_weight)
 
 ## Pipeline for `litters_data`
 
+Look at intermediate approach: 
 
+```{r}
+litters_data_raw = read_csv("./data/FAS_litters.csv",
+  col_types = "ccddiiii")
+litters_data_clean_names = janitor::clean_names(litters_data_raw)
+litters_data_selected_cols = select(litters_data_clean_names, -pups_survive)
+litters_data_with_vars = mutate(litters_data_selected_cols, 
+  wt_gain = gd18_weight - gd0_weight,
+  group = tolower(group))
+litters_data_with_vars
+```
+
+Use nexted fxn calls: 
+
+```{r}
+litters_data_clean = 
+  mutate(
+    select(
+      janitor::clean_names(
+        read_csv("./data/FAS_litters.csv", col_types = "ccddiiii")
+        ), 
+    -pups_survive
+    ),
+  wt_gain = gd18_weight - gd0_weight,
+  group = tolower(group)
+  )
+litters_data_clean
+```
+
+Use piping: 
+
+```{r}
+litters_data = 
+  read_csv("./data/FAS_litters.csv", col_types = "ccddiiii") %>% 
+  janitor::clean_names() %>% 
+  select(pups_survive) %>% 
+  mutate(
+    wt_gain = gd18_weight - gd0_weight, 
+    group = tolower(group)
+  ) %>% 
+filter(!is.na(gd0_weight))
+```
+
+illustrate placeholder use with 'lm'
+
+```{r}
+litters_data = 
+  read_csv("./data/FAS_litters.csv", col_types = "ccddiiii") %>%
+    janitor::clean_names() %>%
+   select(-pups_survive) %>%
+   mutate(
+    wt_gain = gd18_weight - gd0_weight,
+    group = tolower(group)
+    ) %>% 
+    filter(!is.na(gd18_weight - gd0_weight)) %>% 
+    lm(gd18_weight ~ gd0_weight, data = .)
+```
 
